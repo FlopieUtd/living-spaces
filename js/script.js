@@ -25,6 +25,8 @@ const content = {
 // DOM caching
 
 const grid = document.querySelector('.grid');
+const itemWidthSlider = document.querySelector('.slider--item-width');
+const gutterSizeSlider = document.querySelector('.slider--gutter-size');
 
 // Functions
 
@@ -33,7 +35,7 @@ function getScreenWidth () {
 }
 
 function setColumnAmount () {
-	return Math.floor(state.screenWidth / settings.itemWidth);
+	return Math.floor((state.screenWidth - 20)/ settings.itemWidth);
 }
 
 function initiateColumnHeights () {
@@ -44,7 +46,7 @@ function initiateColumnHeights () {
 
 function getBreakpoints () {
 	for (i = 1; i < (settings.maxColumns == 0 ? 20 : settings.maxColumns); i++) {
-		const breakpoint = i * settings.itemWidth;
+		const breakpoint = (i * settings.itemWidth) + 20;
 		state.breakpoints.push(breakpoint);
 	}
 }
@@ -148,19 +150,26 @@ function rerender () {
 	render(content.items);
 }
 
-// Event Listeners
-
-window.addEventListener('resize', function () {
+function handleResize () {
 
 	const newScreenWidth = window.innerWidth;
-
-	if (newScreenWidth <= state.adjacentBreakpoints.previous || newScreenWidth >= state.adjacentBreakpoints.next ) {
-		rerender();
-	}
 
 	state.screenWidth = getScreenWidth();
 	state.columnAmount = setColumnAmount();
 	setGridWidth();
-})
+
+	if (newScreenWidth < state.adjacentBreakpoints.previous || newScreenWidth > state.adjacentBreakpoints.next ) {
+		rerender();
+	}
+	
+}
+
+// Event Listeners
+
+window.addEventListener('resize', handleResize);
+window.addEventListener('orientationchange', handleResize);
+itemWidthSlider
+
+
 
 init();

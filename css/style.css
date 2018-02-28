@@ -6,7 +6,11 @@
 }
 
 .header {
-	padding: 2rem 0;	
+	padding: 1.5rem 3rem;	
+	display: flex;
+	justify-content: space-between;
+	max-width: 1200px;
+	margin: auto;
 }
 
 .heading {
@@ -17,6 +21,7 @@
 
 .heading h1 {
 	font-size: 2.5rem;
+	letter-spacing: -.1rem;	
 }
 
 .heading img {
@@ -24,13 +29,8 @@
 	margin-right: .5rem;
 }
 
-
 .grey {
-	color: #ccc;
-}
-
-h1 {
-	letter-spacing: -.1rem;
+	color: #ddd;
 }
 
 .grid {

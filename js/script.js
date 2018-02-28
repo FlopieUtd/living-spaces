@@ -24,9 +24,9 @@ const content = {
 
 // DOM caching
 
+const header = document.querySelector('.header');
 const grid = document.querySelector('.grid');
-const itemWidthSlider = document.querySelector('.slider--item-width');
-const gutterSizeSlider = document.querySelector('.slider--gutter-size');
+
 
 // Functions
 
@@ -77,6 +77,7 @@ function getAdjacentBreakpoints (currentScreenWidth, breakpoints) {
 
 function setGridWidth () {
 	grid.style.width = state.columnAmount * settings.itemWidth + 'px';
+	header.style.width = state.columnAmount * settings.itemWidth + 'px';
 }
 
 function reset () {
@@ -168,8 +169,5 @@ function handleResize () {
 
 window.addEventListener('resize', handleResize);
 window.addEventListener('orientationchange', handleResize);
-itemWidthSlider
-
-
 
 init();

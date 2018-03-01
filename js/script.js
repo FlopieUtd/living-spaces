@@ -3,8 +3,9 @@
 const settings = {
 	itemWidth: 260,
 	gutterSize: 24,
-	maxItemHeight: 0,
-	maxColumns: 0				// 0 is unlimited
+	maxItemHeight: 480,
+	maxColumns: 0,				// 0 is unlimited
+	itemAmount: 33,
 }
 
 const state = {
@@ -12,14 +13,11 @@ const state = {
 	breakpoints: [],
 	adjacentBreakpoints: {
 		previous: 0,
-		next: 0
+		next: 0,
 	},
 	columnAmount: 0,
 	columnHeights: [],
-}
-
-const content = {
-	itemAmount: 27
+	items: [],
 }
 
 // DOM caching
@@ -81,7 +79,6 @@ function setGridWidth () {
 }
 
 function reset () {
-	grid.innerHTML = '';
 	state.columnHeights = [];
 	initiateColumnHeights();
 	getAdjacentBreakpoints(state.screenWidth, state.breakpoints);
@@ -94,34 +91,20 @@ function init () {
 	getAdjacentBreakpoints(state.screenWidth, state.breakpoints);
 	initiateColumnHeights();
 	setGridWidth();
-	render(content.items);
+	renderItems(settings.itemAmount);
 }
 
-function render (items) {
-
-	for (i = 0; i < content.itemAmount; i++) {
+function renderItems (itemAmount) {
+	for (let i = 0; i < itemAmount; i++) {
 
 		const currentImage = {};
 		const image = new Image();
-		image.src = './images/' + i + '.jpg';
+		image.src = './images/items/' + i + '.jpg';
+		state.items.push({
+			id: i,
+		});
 
 		image.onload = function () {
-
-			// Determine column
-
-			const shortestColumn = Math.min(...state.columnHeights);
-			const columnIndex = state.columnHeights.indexOf(shortestColumn);
-			const offset = columnIndex * settings.itemWidth;
-
-			// Create item
-
-			const itemElement = document.createElement('div');
-			itemElement.classList.add('item');
-
-			// Create wrapper
-
-			const wrapper = document.createElement('div');
-			wrapper.classList.add('item__wrapper');
 
 			// Load image, get dimensions
 
@@ -129,26 +112,67 @@ function render (items) {
 			currentImage.width = image.width;
 			currentImage.relativeHeight = Math.round(settings.itemWidth / image.width * image.height);
 
+			// Create wrapper
+
+			const wrapper = document.createElement('div');
+			wrapper.classList.add('item__wrapper');
 			wrapper.style.height = currentImage.relativeHeight + 'px';
-			itemElement.style.left = offset + 'px';
-			itemElement.style.top = state.columnHeights[columnIndex] + 'px';
+
+			// Create item
+
+			const itemElement = document.createElement('div');
+			itemElement.classList.add('item');
 			itemElement.style.width = settings.itemWidth + 'px';
 			itemElement.style.padding = '0 ' + settings.gutterSize / 2 + 'px ' + settings.gutterSize + 'px';
-			state.columnHeights[columnIndex] += currentImage.relativeHeight + settings.gutterSize;		
-
+			itemElement.dataset.id = i;
+	
 			// Nest and append to DOM
 
 			wrapper.appendChild(image);
 			itemElement.appendChild(wrapper)
 			grid.appendChild(itemElement);
 
+			if (i == itemAmount - 1) {
+				const p = new Promise(
+					function (resolve, reject) {
+						if (grid.childElementCount == itemAmount) {
+							positionItems(state.items);
+						} else {
+							setTimeout(function () {
+								positionItems(state.items);
+							},100);
+						}
+					}
+				);
+			}
 		}
 	}
 }
 
+function positionItems (items) {
+	items.forEach(function (item) {
+
+		const element = document.querySelector('[data-id="' + item.id + '"]');
+
+		const columnIndex = state.columnHeights.indexOf(Math.min(...state.columnHeights));
+		const offsetX = columnIndex * settings.itemWidth;
+		const offsetY = state.columnHeights[columnIndex];
+		state.columnHeights[columnIndex] += element.clientHeight;	
+
+		element.style.transform = 'translate(' + offsetX + 'px, ' + offsetY + 'px)'
+	
+	})
+}
+
+function reset () {
+	state.columnHeights = [];
+	initiateColumnHeights();
+	getAdjacentBreakpoints(state.screenWidth, state.breakpoints);
+}
+
 function rerender () {
 	reset();
-	render(content.items);
+	positionItems(state.items);
 }
 
 function handleResize () {
@@ -162,7 +186,6 @@ function handleResize () {
 	if (newScreenWidth < state.adjacentBreakpoints.previous || newScreenWidth > state.adjacentBreakpoints.next ) {
 		rerender();
 	}
-	
 }
 
 // Event Listeners

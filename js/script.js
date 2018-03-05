@@ -157,7 +157,6 @@ function renderItems (itemAmount) {
 
 		image.onerror = function () {
 			state.items.pop();
-			console.log('finished');
 			state.finished = true;
 			return;
 		}
@@ -173,6 +172,7 @@ function positionItems (items) {
 		element != null ? position() : setTimeout(function () {position()},50);
 
 		function position () {
+			console.log(element);
 			const columnIndex = state.columnHeights.indexOf(Math.min(...state.columnHeights));
 			const offsetX = columnIndex * settings.itemWidth;
 			const offsetY = state.columnHeights[columnIndex];
@@ -231,13 +231,10 @@ function handleScroll () {
 function openFullSize (e) {
 
 	const currentItem = e.target.closest('.item').dataset.id;
+	fullSizeImage.src = './images/items/' + settings.imagePath + '/full-size/' + currentItem + '.jpg';
 
 	fullSizeContainer.style.display = 'block';
 	document.documentElement.style.overflowY = 'hidden';
-
-
-
-	fullSizeImage.src = './images/items/' + settings.imagePath + '/full-size/' + currentItem + '.jpg';;
 }
 
 function closeFullSize () {

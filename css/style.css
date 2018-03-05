@@ -5,6 +5,10 @@
 	font-family: sans-serif;
 }
 
+html {
+  overflow-y: scroll;
+}
+
 .header {
 	padding: 2rem 1rem;	
 	display: flex;
@@ -36,6 +40,8 @@
 	position: relative;
 	width: 1040px;
 	margin: 0 auto;
+	opacity: 0;
+	transition: opacity .25s ease-in-out;
 }
 
 .item {
@@ -49,7 +55,7 @@
 	align-items: center;
 	border-radius: 5px;
 	overflow: hidden;
-	cursor: pointer;
+	cursor: zoom-in;
 }
 
 .item__wrapper img:hover {
@@ -60,6 +66,36 @@
 	object-fit: cover;
 	width: 100%;
 	height: 100%;
-	transition: all .2s ease-in-out;	
+	transition: all .25s ease-in-out;	
 }
 
+.full-size {
+	display: none;
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	background: white;
+	padding: 1.5rem;
+}
+
+.full-size__header {
+	width: 100%;
+	display: flex;
+	justify-content: flex-end;
+}
+
+.full-size__close {
+	cursor: pointer;
+	height: 1.5rem;
+	width: 1.5rem;
+}
+
+.full-size__image-holder {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding-bottom: 3rem;
+}

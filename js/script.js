@@ -169,16 +169,18 @@ function positionItems (items) {
 
 		const element = document.querySelector('[data-id="' + item.id + '"]');
 
-		element != null ? position() : setTimeout(function () {position()},50);
-
 		function position () {
-			console.log(element);
-			const columnIndex = state.columnHeights.indexOf(Math.min(...state.columnHeights));
-			const offsetX = columnIndex * settings.itemWidth;
-			const offsetY = state.columnHeights[columnIndex];
-			state.columnHeights[columnIndex] += element.clientHeight;	
-			element.style.transform = 'translate(' + offsetX + 'px, ' + offsetY + 'px)';
+			if (element != null) {
+	 			const columnIndex = state.columnHeights.indexOf(Math.min(...state.columnHeights));
+				const offsetX = columnIndex * settings.itemWidth;
+				const offsetY = state.columnHeights[columnIndex];
+				state.columnHeights[columnIndex] += element.clientHeight;	
+				element.style.transform = 'translate(' + offsetX + 'px, ' + offsetY + 'px)';				
+			} else {
+				setTimeout(function(){position();},50)
+			}
 		}
+		position();
 	});
 	grid.style.opacity = '1';
 	setBodyHeight();

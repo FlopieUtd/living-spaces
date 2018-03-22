@@ -108,9 +108,6 @@ function init () {
 	setGridWidth();
 	setMaxItemHeight();
 	renderItems(settings.itemAmount);
-	setTimeout(function () {
-		positionItems(state.items);
-	},100);
 }
 
 function renderItems (itemAmount) {
@@ -155,7 +152,7 @@ function renderItems (itemAmount) {
 
 			state.itemsReady++;
 			if (state.itemsReady == settings.itemAmount) {
-				console.log('finished');
+				positionItems(state.items);
 			}
 		}
 	}

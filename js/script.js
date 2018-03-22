@@ -5,7 +5,7 @@ const settings = {
 	gutterSize: 24,
 	maxItemHeight: 0,
 	maxColumns: 0,															// 0 is unlimited
-	itemAmount: 32,
+	itemAmount: 37,
 	imagePath: 'interiors',
 }
 
@@ -19,9 +19,8 @@ const state = {
 	columnAmount: 0,
 	columnHeights: [],
 	items: [],
-	currentItem: 0,
 	bodyHeight: 0,
-	finished: false,
+	itemsReady: 0,
 }
 
 // DOM caching
@@ -111,11 +110,11 @@ function init () {
 	renderItems(settings.itemAmount);
 	setTimeout(function () {
 		positionItems(state.items);
-	},50);
+	},100);
 }
 
 function renderItems (itemAmount) {
-	for (let i = state.currentItem; i < state.currentItem + itemAmount; i++) {
+	for (let i = 0; i < itemAmount; i++) {
 
 		const currentImage = {};
 		const image = new Image();
@@ -153,15 +152,13 @@ function renderItems (itemAmount) {
 			wrapper.appendChild(image);
 			itemElement.appendChild(wrapper);
 			grid.appendChild(itemElement);
-		}
 
-		image.onerror = function () {
-			state.items.pop();
-			state.finished = true;
-			return;
+			state.itemsReady++;
+			if (state.itemsReady == settings.itemAmount) {
+				console.log('finished');
+			}
 		}
 	}
-	state.currentItem += settings.itemAmount;
 }
 
 function positionItems (items) {
@@ -184,17 +181,6 @@ function positionItems (items) {
 	});
 	grid.style.opacity = '1';
 	setBodyHeight();
-}
-
-function loadMoreItems () {
-	reset();	
-	renderItems(settings.itemAmount);
-	setTimeout(function () {
-		positionItems(state.items);
-		setTimeout(function () {
-			window.addEventListener('scroll', handleScroll); 
-		},50);
-	},50);
 }
 
 function reset () {
@@ -221,15 +207,6 @@ function handleResize () {
 	}
 }
 
-function handleScroll () {
-  if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-  	window.removeEventListener('scroll', handleScroll);
-  	if (!state.finished) {
-  		loadMoreItems();
-  	}
-  }	
-}
-
 function openFullSize (e) {
 
 	const currentItem = e.target.closest('.item').dataset.id;
@@ -248,7 +225,6 @@ function closeFullSize () {
 
 window.addEventListener('resize', handleResize);
 window.addEventListener('orientationchange', handleResize);
-window.addEventListener('scroll', handleScroll); 
 fullSizeClose.addEventListener('click', closeFullSize);
 
 init();

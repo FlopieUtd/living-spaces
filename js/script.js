@@ -5,7 +5,7 @@ const settings = {
 	gutterSize: 24,
 	maxItemHeight: 0,
 	maxColumns: 0,															// 0 is unlimited
-	itemAmount: 37,
+	itemAmount: 41,
 	imagePath: 'interiors',
 }
 

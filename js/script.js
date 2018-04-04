@@ -209,11 +209,12 @@ function handleResize () {
 
 function openFullSize (e) {
 
-	fullSizeLoader.style.display = 'block';
+	fullSizeLoader.style.display = 'flex';
 	const currentItem = e.target.closest('.item').dataset.id;
 	fullSizeImage.src = './images/items/' + settings.imagePath + '/full-size/' + currentItem + '.jpg';
 	fullSizeImage.onload = function () {
 		fullSizeLoader.style.display = 'none';
+		fullSizeImage.style.opacity = '1';
 	}
 
 	fullSizeContainer.style.display = 'block';
@@ -222,6 +223,7 @@ function openFullSize (e) {
 
 function closeFullSize () {
 	fullSizeContainer.style.display = 'none';
+	fullSizeImage.style.opacity = '0';
 	document.documentElement.style.overflowY = 'scroll';
 }
 

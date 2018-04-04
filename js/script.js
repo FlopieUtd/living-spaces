@@ -31,6 +31,8 @@ const grid = document.querySelector('.grid');
 const fullSizeContainer = document.querySelector('.full-size');
 const fullSizeClose = document.querySelector('.full-size__close');
 const fullSizeImage = document.querySelector('.full-size-image');
+const gridLoader = document.querySelector('.grid-loader');
+const fullSizeLoader = document.querySelector('.full-size-loader');
 
 // Functions
 
@@ -108,6 +110,7 @@ function init () {
 	setGridWidth();
 	setMaxItemHeight();
 	renderItems(settings.itemAmount);
+	gridLoader.style.display = 'none';
 }
 
 function renderItems (itemAmount) {
@@ -206,8 +209,12 @@ function handleResize () {
 
 function openFullSize (e) {
 
+	fullSizeLoader.style.display = 'block';
 	const currentItem = e.target.closest('.item').dataset.id;
 	fullSizeImage.src = './images/items/' + settings.imagePath + '/full-size/' + currentItem + '.jpg';
+	fullSizeImage.onload = function () {
+		fullSizeLoader.style.display = 'none';
+	}
 
 	fullSizeContainer.style.display = 'block';
 	document.documentElement.style.overflowY = 'hidden';

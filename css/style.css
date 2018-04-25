@@ -90,6 +90,7 @@ body {
 	align-items: center;
 	border-radius: 5px;
 	overflow: hidden;
+	cursor: pointer;
 	cursor: zoom-in;
 }
 

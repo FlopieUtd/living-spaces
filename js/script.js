@@ -1,107 +1,129 @@
+// Closest polyfill
+
+if (!Element.prototype.matches)
+    Element.prototype.matches = Element.prototype.msMatchesSelector || 
+                                Element.prototype.webkitMatchesSelector;
+
+if (!Element.prototype.closest)
+    Element.prototype.closest = function(s) {
+        var el = this;
+        if (!document.documentElement.contains(el)) return null;
+        do {
+            if (el.matches(s)) return el;
+            el = el.parentElement || el.parentNode;
+        } while (el !== null && el.nodeType === 1); 
+        return null;
+    };
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 // Variables
 
-const settings = {
+var settings = {
 	itemWidth: 260,
 	gutterSize: 24,
 	maxItemHeight: 0,
-	maxColumns: 0,															// 0 is unlimited
+	maxColumns: 0, // 0 is unlimited
 	itemAmount: 43,
-	imagePath: 'interiors',
-}
+	imagePath: 'interiors'
+};
 
-const state = {
+var state = {
 	screenWidth: 0,
 	breakpoints: [],
 	adjacentBreakpoints: {
 		previous: 0,
-		next: 0,
+		next: 0
 	},
 	columnAmount: 0,
 	columnHeights: [],
 	items: [],
 	bodyHeight: 0,
-	itemsReady: 0,
-}
+	itemsReady: 0
 
-// DOM caching
+	// DOM caching
 
-const body = document.querySelector('body');
-const header = document.querySelector('.header');
-const grid = document.querySelector('.grid');
-const fullSizeContainer = document.querySelector('.full-size');
-const fullSizeClose = document.querySelector('.full-size__close');
-const fullSizeImage = document.querySelector('.full-size-image');
-const gridLoader = document.querySelector('.grid-loader');
-const fullSizeLoader = document.querySelector('.full-size-loader');
+};var body = document.querySelector('body');
+var header = document.querySelector('.header');
+var grid = document.querySelector('.grid');
+var fullSizeContainer = document.querySelector('.full-size');
+var fullSizeClose = document.querySelector('.full-size__close');
+var fullSizeImage = document.querySelector('.full-size-image');
+var gridLoader = document.querySelector('.grid-loader');
+var fullSizeLoader = document.querySelector('.full-size-loader');
 
 // Functions
 
-function getScreenWidth () {
+function getScreenWidth() {
 	return window.innerWidth;
 }
 
-function setBodyHeight () {
-	state.bodyHeight = Math.max(...state.columnHeights);
+function setBodyHeight() {
+	state.bodyHeight = Math.max.apply(Math, _toConsumableArray(state.columnHeights));
 	body.style.height = state.bodyHeight + 'px';
 }
 
-function setColumnAmount () {
-	return Math.floor((state.screenWidth - 20)/ settings.itemWidth);
+function setColumnAmount() {
+	return Math.floor((state.screenWidth - 20) / settings.itemWidth);
 }
 
-function initiateColumnHeights () {
+function initiateColumnHeights() {
 	for (i = 0; i < state.columnAmount; i++) {
 		state.columnHeights.push(0);
 	}
 }
 
-function getBreakpoints () {
+function getBreakpoints() {
 	for (i = 1; i < (settings.maxColumns == 0 ? 20 : settings.maxColumns); i++) {
-		const breakpoint = (i * settings.itemWidth) + 20;
+		var breakpoint = i * settings.itemWidth + 20;
 		state.breakpoints.push(breakpoint);
 	}
 }
 
-function getAdjacentBreakpoints (currentScreenWidth, breakpoints) {
+function getAdjacentBreakpoints(currentScreenWidth, breakpoints) {
 
-	function getClosestDown (test, array) {
-	  let num = result = 0;
-	  for(let i = 0; i < array.length; i++) {
-	    num = array[i];
-	    if (num <= test) { result = num; }
-	  }
-	  return result;
+	function getClosestDown(test, array) {
+		var num = result = 0;
+		for (var _i = 0; _i < array.length; _i++) {
+			num = array[_i];
+			if (num <= test) {
+				result = num;
+			}
+		}
+		return result;
 	}
 
-	function getClosestUp (test, array) {
-		let num = result = 0;
-		for(let i = array.length; i > 0; i--) {
-			num = array[i]
-			if (num >= test) { result = num }
+	function getClosestUp(test, array) {
+		var num = result = 0;
+		for (var _i2 = array.length; _i2 > 0; _i2--) {
+			num = array[_i2];
+			if (num >= test) {
+				result = num;
+			}
 		}
-		return result
+		return result;
 	}
 
 	state.adjacentBreakpoints.previous = getClosestDown(currentScreenWidth, breakpoints);
 	state.adjacentBreakpoints.next = getClosestUp(currentScreenWidth, breakpoints);
 }
 
-function setGridWidth () {
+function setGridWidth() {
 	grid.style.width = state.columnAmount * settings.itemWidth + 'px';
 	header.style.width = state.columnAmount * settings.itemWidth + 'px';
 }
 
-function setMaxItemHeight () {
+function setMaxItemHeight() {
 	settings.maxItemHeight = settings.itemWidth * 2;
 }
 
-function reset () {
+function reset() {
 	state.columnHeights = [];
 	initiateColumnHeights();
 	getAdjacentBreakpoints(state.screenWidth, state.breakpoints);
 }
 
-function init () {
+function init() {
 	state.screenWidth = getScreenWidth();
 	state.columnAmount = setColumnAmount();
 	getBreakpoints();
@@ -113,14 +135,14 @@ function init () {
 	gridLoader.style.display = 'none';
 }
 
-function renderItems (itemAmount) {
-	for (let i = 0; i < itemAmount; i++) {
+function renderItems(itemAmount) {
+	var _loop = function _loop(_i3) {
 
-		const currentImage = {};
-		const image = new Image();
-		image.src = './images/items/' + settings.imagePath + '/thumb/' + i + '.jpg';
+		var currentImage = {};
+		var image = new Image();
+		image.src = './images/items/' + settings.imagePath + '/thumb/' + _i3 + '.jpg';
 		state.items.push({
-			id: i,
+			id: _i3
 		});
 
 		image.onload = function () {
@@ -133,20 +155,20 @@ function renderItems (itemAmount) {
 
 			// Create wrapper
 
-			const wrapper = document.createElement('div');
+			var wrapper = document.createElement('div');
 			wrapper.classList.add('item__wrapper');
 			wrapper.style.height = currentImage.relativeHeight + 'px';
 
 			// Create item
 
-			const itemElement = document.createElement('div');
+			var itemElement = document.createElement('div');
 			itemElement.classList.add('item');
 			itemElement.style.width = settings.itemWidth + 'px';
 			itemElement.style.padding = '0 ' + settings.gutterSize / 2 + 'px ' + settings.gutterSize + 'px';
 			itemElement.style.opacity = 1;
-			itemElement.dataset.id = i;
+			itemElement.dataset.id = _i3;
 			itemElement.addEventListener('click', openFullSize);
-	
+
 			// Nest and append to DOM
 
 			wrapper.appendChild(image);
@@ -157,24 +179,30 @@ function renderItems (itemAmount) {
 			if (state.itemsReady == settings.itemAmount) {
 				positionItems(state.items);
 			}
-		}
+		};
+	};
+
+	for (var _i3 = 0; _i3 < itemAmount; _i3++) {
+		_loop(_i3);
 	}
 }
 
-function positionItems (items) {
+function positionItems(items) {
 	items.forEach(function (item) {
 
-		const element = document.querySelector('[data-id="' + item.id + '"]');
+		var element = document.querySelector('[data-id="' + item.id + '"]');
 
-		function position () {
+		function position() {
 			if (element != null) {
-	 			const columnIndex = state.columnHeights.indexOf(Math.min(...state.columnHeights));
-				const offsetX = columnIndex * settings.itemWidth;
-				const offsetY = state.columnHeights[columnIndex];
-				state.columnHeights[columnIndex] += element.clientHeight;	
-				element.style.transform = 'translate(' + offsetX + 'px, ' + offsetY + 'px)';				
+				var columnIndex = state.columnHeights.indexOf(Math.min.apply(Math, _toConsumableArray(state.columnHeights)));
+				var offsetX = columnIndex * settings.itemWidth;
+				var offsetY = state.columnHeights[columnIndex];
+				state.columnHeights[columnIndex] += element.clientHeight;
+				element.style.transform = 'translate(' + offsetX + 'px, ' + offsetY + 'px)';
 			} else {
-				setTimeout(function(){position();},50)
+				setTimeout(function () {
+					position();
+				}, 50);
 			}
 		}
 		position();
@@ -183,45 +211,45 @@ function positionItems (items) {
 	setBodyHeight();
 }
 
-function reset () {
+function reset() {
 	state.columnHeights = [];
 	initiateColumnHeights();
 	getAdjacentBreakpoints(state.screenWidth, state.breakpoints);
 }
 
-function rerender () {
+function rerender() {
 	reset();
 	positionItems(state.items);
 }
 
-function handleResize () {
+function handleResize() {
 
-	const newScreenWidth = window.innerWidth;
+	var newScreenWidth = window.innerWidth;
 
 	state.screenWidth = getScreenWidth();
 	state.columnAmount = setColumnAmount();
 	setGridWidth();
 
-	if (newScreenWidth < state.adjacentBreakpoints.previous || newScreenWidth > state.adjacentBreakpoints.next ) {
+	if (newScreenWidth < state.adjacentBreakpoints.previous || newScreenWidth > state.adjacentBreakpoints.next) {
 		rerender();
 	}
 }
 
-function openFullSize (e) {
+function openFullSize(e) {
 
 	fullSizeLoader.style.display = 'flex';
-	const currentItem = e.target.closest('.item').dataset.id;
+	var currentItem = e.target.closest('.item').dataset.id;
 	fullSizeImage.src = './images/items/' + settings.imagePath + '/full-size/' + currentItem + '.jpg';
 	fullSizeImage.onload = function () {
 		fullSizeLoader.style.display = 'none';
 		fullSizeImage.style.opacity = '1';
-	}
+	};
 
 	fullSizeContainer.style.display = 'block';
 	document.documentElement.style.overflowY = 'hidden';
 }
 
-function closeFullSize () {
+function closeFullSize() {
 	fullSizeContainer.style.display = 'none';
 	fullSizeImage.style.opacity = '0';
 	document.documentElement.style.overflowY = 'scroll';
@@ -234,4 +262,3 @@ window.addEventListener('orientationchange', handleResize);
 fullSizeClose.addEventListener('click', closeFullSize);
 
 init();
-
